@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  country     String?
+  website     String?
+  foundedYear Int?
+  description String?
+  logo        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bikes       Bike[]
+}
+
+model Bike {
+  id            String   @id @default(cuid())
+  model         String
+  brandId       String
+  brand         Brand    @relation(fields: [brandId], references: [id])
+  frameMaterial String   // carbon, aluminum, steel, titanium
+  brakeSystem   String   // disc, rim
+  price         Float
+  weight        Float?   // kg
+  groupset      String?  // e.g. Shimano 105, Ultegra, SRAM Rival
+  reachStack    String   // JSON: { reach: number, stack: number, sizes: [...] }
+  scenarioTags  String   // JSON: ["climbing", "endurance", "racing"]
+  description   String?
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([brandId])
+  @@index([frameMaterial])
+  @@index([brakeSystem])
+}
