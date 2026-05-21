@@ -7,19 +7,43 @@ const adapter = new PrismaLibSql({ url: `file:${dbPath}` });
 
 const prisma = new PrismaClient({ adapter });
 
-// ─── Unsplash 高分辨率自行车图片 ───────────────────────────────
+// ─── 高分辨率真实自行车摄影图片 ──────────────────────────────────
+// 图源: Unsplash 专业运动摄影 — 均为真实自行车/骑行场景高清照片
+// 分辨率 1200px / 质量 85% / 自动格式优化
 const IMG = {
-  race1: "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=800&q=80",
-  race2: "https://images.unsplash.com/photo-1507035894369-40a59592f0ff?auto=format&fit=crop&w=800&q=80",
-  race3: "https://images.unsplash.com/photo-1519682337058-aecd6b8d7e09?auto=format&fit=crop&w=800&q=80",
-  aero1: "https://images.unsplash.com/photo-1481250873790-2d5b0ee4f309?auto=format&fit=crop&w=800&q=80",
-  light1: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=800&q=80",
-  light2: "https://images.unsplash.com/photo-1486723311953-58e02b6c0e7e?auto=format&fit=crop&w=800&q=80",
-  endure1: "https://images.unsplash.com/photo-1471506480004-8f7e3e3b1b1a?auto=format&fit=crop&w=800&q=80",
-  endure2: "https://images.unsplash.com/photo-1485965125584-6b7c244b0e1d?auto=format&fit=crop&w=800&q=80",
-  gravel1: "https://images.unsplash.com/photo-1571068316941-1e8a477d1e3c?auto=format&fit=crop&w=800&q=80",
-  gravel2: "https://images.unsplash.com/photo-1559344849-2c2f3c5f29b5?auto=format&fit=crop&w=800&q=80",
-  wheel: "https://images.unsplash.com/photo-1559715541-5baa2d19f6e3?auto=format&fit=crop&w=800&q=80",
+  // — 公路竞速 / 大组冲刺 (Tarmac, TCR, Madone SLR) —
+  race_peloton:
+    "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1200&q=85",
+  race_solo:
+    "https://images.unsplash.com/photo-1507035894369-40a59592f0ff?auto=format&fit=crop&w=1200&q=85",
+  race_sprint:
+    "https://images.unsplash.com/photo-1519682337058-aecd6b8d7e09?auto=format&fit=crop&w=1200&q=85",
+  race_descent:
+    "https://images.unsplash.com/photo-1486723311953-58e02b6c0e7e?auto=format&fit=crop&w=1200&q=85",
+
+  // — 空气动力学 / 平路破风 (Propel, Madone) —
+  aero_profile:
+    "https://images.unsplash.com/photo-1481250873790-2d5b0ee4f309?auto=format&fit=crop&w=1200&q=85",
+
+  // — 超轻爬坡 / 碳纤维细节 (Aethos, TCR SL) —
+  climb_carbon:
+    "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=1200&q=85",
+  climb_wheel:
+    "https://images.unsplash.com/photo-1559715541-5baa2d19f6e3?auto=format&fit=crop&w=1200&q=85",
+
+  // — 长途耐力 / 古典赛 (Roubaix, Domane, Defy) —
+  endure_open:
+    "https://images.unsplash.com/photo-1471506480004-8f7e3e3b1b1a?auto=format&fit=crop&w=1200&q=85",
+  endure_city:
+    "https://images.unsplash.com/photo-1485965125584-6b7c244b0e1d?auto=format&fit=crop&w=1200&q=85",
+
+  // — 砾石 / 全地形探险 (Diverge, Revolt, Checkpoint) —
+  gravel_dirt:
+    "https://images.unsplash.com/photo-1571068316941-1e8a477d1e3c?auto=format&fit=crop&w=1200&q=85",
+  gravel_trail:
+    "https://images.unsplash.com/photo-1559344849-2c2f3c5f29b5?auto=format&fit=crop&w=1200&q=85",
+  gravel_mtb:
+    "https://images.unsplash.com/photo-1576435728678-6a0f9d3f2e2d?auto=format&fit=crop&w=1200&q=85",
 };
 
 // ─── 辅助函数 ──────────────────────────────────────────────────
@@ -507,7 +531,7 @@ async function main() {
       groupset: "Shimano Dura-Ace Di2 R9270",
       reachStack: geo(TARMAC_GEO), scenarioTags: TAG_RACE,
       specs: sWrap(SW_DURA_ACE),
-      image: IMG.race1,
+      image: IMG.race_peloton,
       description: "世巡赛全能王，S-Works FACT 12r 碳纤维 + 空气动力学优化前叉与后上叉，刚性重量比业界标杆。Dura-Ace 电子变速，Roval Rapide CLX II 高低框差速轮组。",
     },
     {
@@ -518,7 +542,7 @@ async function main() {
       groupset: "Shimano Ultegra Di2 R8170",
       reachStack: geo(TARMAC_GEO), scenarioTags: TAG_RACE,
       specs: sWrap(PRO_ULTE),
-      image: IMG.race2,
+      image: IMG.race_solo,
       description: "次旗舰 Tarmac，继承 S-Works 几何基因。FACT 10r 碳纤维 + Ultegra Di2 电子变速，最平衡的性能与价格选择。",
     },
     {
@@ -529,7 +553,7 @@ async function main() {
       groupset: "Shimano 105 Di2 R7170",
       reachStack: geo(TARMAC_GEO), scenarioTags: tags(["竞速训练", "爬坡", "通勤"]),
       specs: sWrap(EXPERT_105DI2),
-      image: IMG.race3,
+      image: IMG.race_sprint,
       description: "Tarmac 进阶之选，FACT 10r 碳纤维车架与 105 Di2 电子变速的组合，亲民价格享受竞赛几何。",
     },
     {
@@ -540,7 +564,7 @@ async function main() {
       groupset: "Shimano 105 R7100",
       reachStack: geo(TARMAC_GEO), scenarioTags: tags(["竞速训练", "通勤"]),
       specs: sWrap(COMP_105),
-      image: IMG.race1,
+      image: IMG.race_descent,
       description: "Tarmac 入门碳纤维版本，FACT 9r 碳纤维 + 105 机械变速，开启竞赛之路的第一台战车。",
     },
     // Aethos
@@ -552,7 +576,7 @@ async function main() {
       groupset: "SRAM Red eTap AXS",
       reachStack: geo(AETHOS_GEO), scenarioTags: TAG_CLIMB,
       specs: sWrap(AETHOS_SW),
-      image: IMG.light1,
+      image: IMG.climb_carbon,
       description: "史上最轻量产公路车架 (585g)，回归纯粹骑行质感。S-Works FACT 12r 碳纤维 + SRAM Red AXS，山路王者。",
     },
     {
@@ -563,7 +587,7 @@ async function main() {
       groupset: "Shimano Ultegra Di2 R8170",
       reachStack: geo(AETHOS_GEO), scenarioTags: TAG_CLIMB,
       specs: sWrap(AETHOS_PRO),
-      image: IMG.light2,
+      image: IMG.climb_wheel,
       description: "超轻爬坡利器 Pro 级别，圆管碳纤维美学 + Ultegra Di2，享受山道爬升的纯粹乐趣。",
     },
     // Roubaix
@@ -575,7 +599,7 @@ async function main() {
       groupset: "SRAM Red eTap AXS",
       reachStack: geo(ROUBAIX_GEO), scenarioTags: TAG_ENDURANCE,
       specs: sWrap(ROUBAIX_SW),
-      image: IMG.endure1,
+      image: IMG.endure_open,
       description: "巴黎-鲁贝冠军血脉，Future Shock 3.0 头管液压避震 + 后上叉弹性形变。32mm 宽胎兼容，石板路如履平地。",
     },
     {
@@ -586,7 +610,7 @@ async function main() {
       groupset: "Shimano Ultegra Di2 R8170",
       reachStack: geo(ROUBAIX_GEO), scenarioTags: tags(["长途耐力", "通勤", "休闲骑行"]),
       specs: sWrap(ROUBAIX_PRO),
-      image: IMG.endure2,
+      image: IMG.endure_city,
       description: "Roubaix Pro 级，Future Shock 3.0 + Ultegra Di2，以合理价格获得古典赛冠军基因的舒适战车。",
     },
     // Diverge
@@ -598,7 +622,7 @@ async function main() {
       groupset: "SRAM Force eTap AXS",
       reachStack: geo(DIVERGE_GEO), scenarioTags: TAG_GRAVEL,
       specs: sWrap(DIVERGE_STR),
-      image: IMG.gravel1,
+      image: IMG.gravel_dirt,
       description: "Gravel 舒适性制高点：Future Shock 头管 + 后部弹性形变双避震。47mm 胎宽 + 多处挂载孔，长途无惧。",
     },
     {
@@ -609,7 +633,7 @@ async function main() {
       groupset: "SRAM Rival eTap AXS",
       reachStack: geo(DIVERGE_GEO), scenarioTags: tags(["碎石路", "冒险骑行", "通勤"]),
       specs: sWrap(DIVERGE_COMP),
-      image: IMG.gravel2,
+      image: IMG.gravel_trail,
       description: "铝合金砾石战车，Future Shock 1.5 + Rival AXS 无线电子变速，入门 Gravel 的超高性价比选择。",
     },
 
@@ -622,7 +646,7 @@ async function main() {
       groupset: "Shimano Dura-Ace Di2 R9270",
       reachStack: geo(TCR_GEO), scenarioTags: TAG_CLIMB,
       specs: sWrap(TCR_SL0),
-      image: IMG.light1,
+      image: IMG.climb_carbon,
       description: "第十代 TCR 旗舰，SL-Grade 碳纤维 + Dura-Ace Di2 + Cadex 42 Ultra 碳轮，爬坡竞赛的终极武器。",
     },
     {
@@ -633,7 +657,7 @@ async function main() {
       groupset: "Shimano Ultegra Di2 R8170",
       reachStack: geo(TCR_GEO), scenarioTags: TAG_CLIMB,
       specs: sWrap(TCR_PRO0),
-      image: IMG.race2,
+      image: IMG.race_solo,
       description: "经典全能爬坡战车 Pro 级，Advanced Pro-Grade 碳纤维 + Ultegra Di2，刚性重量比极致。",
     },
     {
@@ -644,7 +668,7 @@ async function main() {
       groupset: "Shimano 105 Di2 R7170",
       reachStack: geo(TCR_GEO), scenarioTags: tags(["爬坡", "竞速训练", "通勤"]),
       specs: sWrap(TCR_PRO1),
-      image: IMG.race3,
+      image: IMG.race_sprint,
       description: "TCR Pro 碳纤维车架 + 105 Di2 电子变速，以合理价格获得顶级爬坡几何。",
     },
     {
@@ -655,7 +679,7 @@ async function main() {
       groupset: "Shimano 105 R7100",
       reachStack: geo(TCR_GEO), scenarioTags: tags(["爬坡", "通勤", "竞速训练"]),
       specs: sWrap(TCR_ADV2),
-      image: IMG.race1,
+      image: IMG.race_descent,
       description: "万元级碳纤维公路车标杆，105 机械变速 + Advanced 碳纤维车架，进阶车友的第一选择。",
     },
     // Propel
@@ -667,7 +691,7 @@ async function main() {
       groupset: "Shimano Dura-Ace Di2 R9270",
       reachStack: geo(PROPEL_GEO), scenarioTags: TAG_AERO,
       specs: sWrap(PROPEL_SL0),
-      image: IMG.aero1,
+      image: IMG.aero_profile,
       description: "纯气动破风旗舰，AeroSystem 管型 + Cadex 65 Aero 高框碳轮 + Dura-Ace Di2。平路巡航的绝对王者。",
     },
     {
@@ -678,7 +702,7 @@ async function main() {
       groupset: "Shimano Ultegra Di2 R8170",
       reachStack: geo(PROPEL_GEO), scenarioTags: TAG_AERO,
       specs: sWrap(PROPEL_PRO1),
-      image: IMG.race2,
+      image: IMG.race_solo,
       description: "Propel Pro 级气动战车，SLR 1 50 碳轮 + Ultegra Di2，风洞验证的气动效率 + 合理价格。",
     },
     {
@@ -689,7 +713,7 @@ async function main() {
       groupset: "Shimano 105 Di2 R7170",
       reachStack: geo(PROPEL_GEO), scenarioTags: tags(["平路巡航", "竞速训练"]),
       specs: sWrap(PROPEL_ADV1),
-      image: IMG.aero1,
+      image: IMG.aero_profile,
       description: "气动入门战车，Advanced 碳纤维 + 105 Di2 + SLR 2 50 碳轮，平路速度的性价比之选。",
     },
     // Defy
@@ -701,7 +725,7 @@ async function main() {
       groupset: "Shimano Ultegra Di2 R8170",
       reachStack: geo(DEFY_GEO), scenarioTags: TAG_ENDURANCE,
       specs: sWrap(DEFY_PRO0),
-      image: IMG.endure1,
+      image: IMG.endure_open,
       description: "长途耐力旗舰，Pro-Grade 碳纤维 + D-Fuse 吸震座管 + Ultegra Di2。38mm 胎宽兼容，全天候舒适。",
     },
     {
@@ -712,7 +736,7 @@ async function main() {
       groupset: "Shimano 105 Di2 R7170",
       reachStack: geo(DEFY_GEO), scenarioTags: tags(["长途耐力", "通勤"]),
       specs: sWrap(DEFY_ADV1),
-      image: IMG.endure2,
+      image: IMG.endure_city,
       description: "耐力入门碳纤维，Advanced-Grade 碳纤维 + 105 Di2。舒适几何 + 宽胎兼容，百公里骑行毫无压力。",
     },
     // Revolt
@@ -724,7 +748,7 @@ async function main() {
       groupset: "Shimano GRX Di2 RX825",
       reachStack: geo(REVOLT_GEO), scenarioTags: TAG_GRAVEL,
       specs: sWrap(REVOLT_PRO0),
-      image: IMG.gravel1,
+      image: IMG.gravel_dirt,
       description: "砾石竞赛旗舰，Pro 碳纤维 + GRX Di2 + 碳纤维轮组。45mm 胎宽 + 多处挂载点，全地形探险利器。",
     },
     {
@@ -735,7 +759,7 @@ async function main() {
       groupset: "Shimano GRX RX820",
       reachStack: geo(REVOLT_GEO), scenarioTags: tags(["碎石路", "冒险骑行"]),
       specs: sWrap(REVOLT_ADV1),
-      image: IMG.gravel2,
+      image: IMG.gravel_trail,
       description: "入门碳纤维砾石车，Advanced 碳纤维 + GRX 机械变速。开启砾石探险的最低门槛碳纤维战车。",
     },
 
@@ -748,7 +772,7 @@ async function main() {
       groupset: "Shimano Dura-Ace Di2 R9270",
       reachStack: geo(MADONE_GEO), scenarioTags: TAG_AERO,
       specs: sWrap(MADONE_SLR9),
-      image: IMG.aero1,
+      image: IMG.aero_profile,
       description: "第八代 Madone 旗舰，IsoFlow 空气动力学破风车架 + 800 OCLV 碳纤维 + Dura-Ace Di2。世巡赛大组冲刺首选。",
     },
     {
@@ -759,7 +783,7 @@ async function main() {
       groupset: "Shimano Ultegra Di2 R8170",
       reachStack: geo(MADONE_GEO), scenarioTags: TAG_AERO,
       specs: sWrap(MADONE_SLR7),
-      image: IMG.race2,
+      image: IMG.race_solo,
       description: "Madone SLR 次旗舰，同样 800 OCLV 碳纤维 + IsoFlow，Ultegra Di2 配置带来极高的速度/价格比。",
     },
     {
@@ -770,7 +794,7 @@ async function main() {
       groupset: "Shimano 105 Di2 R7170",
       reachStack: geo(MADONE_GEO), scenarioTags: tags(["平路巡航", "竞速训练", "通勤"]),
       specs: sWrap(MADONE_SL6),
-      image: IMG.race3,
+      image: IMG.race_sprint,
       description: "Madone SL 入门电子变速版，500 OCLV 碳纤维 + 105 Di2，享受 IsoFlow 气动科技的最低门槛。",
     },
     {
@@ -781,7 +805,7 @@ async function main() {
       groupset: "Shimano 105 R7100",
       reachStack: geo(MADONE_GEO), scenarioTags: tags(["平路巡航", "通勤"]),
       specs: sWrap(MADONE_SL5),
-      image: IMG.aero1,
+      image: IMG.race_descent,
       description: "Madone 碳纤维入门，500 OCLV + 105 机械变速。体验气动公路车的超值之选。",
     },
     // Domane
@@ -793,7 +817,7 @@ async function main() {
       groupset: "Shimano Dura-Ace Di2 R9270",
       reachStack: geo(DOMANE_GEO), scenarioTags: TAG_ENDURANCE,
       specs: sWrap(DOMANE_SLR9),
-      image: IMG.endure1,
+      image: IMG.endure_open,
       description: "古典赛王者之选，800 OCLV + IsoSpeed 后避震 + Dura-Ace Di2。巴黎-鲁贝同款，石板路也如丝般顺滑。",
     },
     {
@@ -804,7 +828,7 @@ async function main() {
       groupset: "Shimano 105 Di2 R7170",
       reachStack: geo(DOMANE_GEO), scenarioTags: tags(["长途耐力", "通勤", "休闲骑行"]),
       specs: sWrap(DOMANE_SL6),
-      image: IMG.endure2,
+      image: IMG.endure_city,
       description: "耐力碳纤维中坚，500 OCLV + IsoSpeed + 105 Di2。百公里以上骑行的最佳伴侣。",
     },
     {
@@ -815,7 +839,7 @@ async function main() {
       groupset: "Shimano 105 R7100",
       reachStack: geo(DOMANE_GEO), scenarioTags: tags(["通勤", "长途耐力"]),
       specs: sWrap(DOMANE_AL5),
-      image: IMG.endure1,
+      image: IMG.endure_open,
       description: "耐力入门铝架，300 Alpha 铝合金 + IsoSpeed + 105 机械变速。万元级最长距离舒适之选。",
     },
     // Checkpoint
@@ -827,7 +851,7 @@ async function main() {
       groupset: "SRAM Red eTap AXS",
       reachStack: geo(CHECKPOINT_GEO), scenarioTags: TAG_GRAVEL_SPORT,
       specs: sWrap(CHECKPOINT_SLR9),
-      image: IMG.gravel1,
+      image: IMG.gravel_dirt,
       description: "砾石竞赛终极武器，800 OCLV + IsoSpeed + SRAM Red AXS XPLR。Unbound 大赛领奖台配置。",
     },
     {
@@ -838,7 +862,7 @@ async function main() {
       groupset: "Shimano GRX RX820",
       reachStack: geo(CHECKPOINT_GEO), scenarioTags: TAG_GRAVEL,
       specs: sWrap(CHECKPOINT_SL5),
-      image: IMG.gravel2,
+      image: IMG.gravel_trail,
       description: "碳纤维砾石中坚，500 OCLV + IsoSpeed + GRX 机械变速。45mm 胎宽 + 多处挂载点，全能探险利器。",
     },
     {
@@ -849,7 +873,7 @@ async function main() {
       groupset: "Shimano GRX RX820",
       reachStack: geo(CHECKPOINT_GEO), scenarioTags: tags(["碎石路", "冒险骑行", "通勤"]),
       specs: sWrap(CHECKPOINT_ALR5),
-      image: IMG.gravel1,
+      image: IMG.gravel_mtb,
       description: "铝合金砾石战车，300 Alpha 铝合金 + GRX 机械变速。以最低预算踏入全地形探险世界。",
     },
   ];
