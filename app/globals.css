@@ -117,6 +117,43 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@theme inline {
+  --animate-glow-pulse: glow-pulse 2.5s ease-in-out infinite;
+  --animate-grid-flow: grid-flow 8s linear infinite;
+  --animate-slide-up: slide-up 0.3s ease-out;
+  --animate-fade-in: fade-in 0.2s ease-out;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px oklch(0.79 0.26 134 / 0.15), 0 0 2px oklch(0.79 0.26 134 / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px oklch(0.79 0.26 134 / 0.3), 0 0 6px oklch(0.79 0.26 134 / 0.5);
+  }
+}
+
+@keyframes grid-flow {
+  0% { background-position: 0 0; }
+  100% { background-position: 64px 64px; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Dark scrollbar */
+html {
+  scrollbar-color: oklch(0.37 0 0) oklch(0.145 0 0);
+  scrollbar-width: thin;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
