@@ -153,6 +153,11 @@
   to { width: 0%; }
 }
 
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: 0 0; }
+}
+
 /* Dark scrollbar */
 html {
   scrollbar-color: oklch(0.37 0 0) oklch(0.145 0 0);

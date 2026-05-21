@@ -3,6 +3,7 @@
 import { AlertCircle } from "lucide-react";
 import BikeCard from "@/components/bike/bike-card";
 import type { SizingResult } from "@/lib/bike-utils";
+import type { FitScoreResult } from "@/lib/fit-engine";
 
 interface BikeData {
   id: string;
@@ -17,6 +18,7 @@ interface BikeData {
   description: string | null;
   image: string | null;
   brand: { name: string; country: string | null };
+  fitScore?: FitScoreResult | null;
 }
 
 interface BikeGridProps {
@@ -55,6 +57,7 @@ export default function BikeGrid({
           isCompared={selectedIds.has(bike.id)}
           onToggleCompare={onToggleCompare}
           sizingResult={sizingResult}
+          fitScore={bike.fitScore ?? null}
           disabledCompare={!selectedIds.has(bike.id) && selectedIds.size >= 4}
         />
       ))}

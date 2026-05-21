@@ -9,18 +9,21 @@ import {
   Ruler,
   Warehouse,
   Check,
-  Bike,
   Zap,
   Cog,
   CircleDot,
   ChevronRight,
-  ImageIcon,
+  Target,
+  TrendingUp,
+  TrendingDown,
+  Minus,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useGarage, type GarageBike } from "@/lib/garage-store";
 import { useToast } from "@/components/ui/toast";
+import BikeImage from "@/components/bike/bike-image";
 import {
   parseTags,
   parseReachStack,
@@ -33,6 +36,8 @@ import {
   getGroupsetTier,
   type BikeSpecs,
 } from "@/lib/bike-utils";
+import { useRider } from "@/lib/rider-store";
+import { calculateFitScore, getTargetGeometry } from "@/lib/fit-engine";
 
 // ─── Props ────────────────────────────────────────────────────
 
@@ -60,12 +65,17 @@ export default function BikeDetail({ bike }: BikeDetailProps) {
   const router = useRouter();
   const { isInGarage, toggleBike } = useGarage();
   const { toast } = useToast();
+  const { profile: riderProfile } = useRider();
 
   const tags = parseTags(bike.scenarioTags);
   const geo = parseReachStack(bike.reachStack);
   const specs = parseSpecs(bike.specs);
   const tier = getGroupsetTier(bike.groupset);
   const inGarage = isInGarage(bike.id);
+
+  // Compute fit score and target geometry when rider profile exists
+  const fitScore = riderProfile ? calculateFitScore(riderProfile, bike.reachStack) : null;
+  const targetGeo = riderProfile ? getTargetGeometry(riderProfile) : null;
 
   const garageBike: GarageBike = {
     id: bike.id,
@@ -100,17 +110,13 @@ export default function BikeDetail({ bike }: BikeDetailProps) {
     <div className="min-h-screen bg-neutral-950">
       {/* ─── Hero ─────────────────────────────────────────── */}
       <section className="relative h-[55vh] min-h-[400px] overflow-hidden">
-        {bike.image ? (
-          <img
-            src={bike.image}
-            alt={`${bike.brand.name} ${bike.model}`}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-850 to-neutral-900 flex items-center justify-center">
-            <ImageIcon className="size-20 text-neutral-700" />
-          </div>
-        )}
+        <BikeImage
+          src={bike.image}
+          alt={`${bike.brand.name} ${bike.model}`}
+          brandName={bike.brand.name}
+          sizes="hero"
+          priority
+        />
 
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
@@ -249,7 +255,86 @@ export default function BikeDetail({ bike }: BikeDetailProps) {
           </div>
 
           {/* ── RIGHT: Geometry table ── */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-4">
+            {/* Ideal vs Bike geometry comparison */}
+            {fitScore && targetGeo && (
+              <Card className="border-lime-400/20 bg-lime-400/[0.02]">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Target className="size-4 text-lime-400" />
+                    <CardTitle className="text-sm">理想几何对比</CardTitle>
+                    <span className="ml-auto text-[11px] font-bold font-mono text-lime-400 tabular-nums">
+                      {fitScore.score}% 匹配
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="rounded-lg border border-neutral-800 overflow-hidden">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-neutral-800 bg-neutral-900">
+                          <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-neutral-500" />
+                          <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
+                            理想值
+                          </th>
+                          <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
+                            {fitScore.bestSize} 码
+                          </th>
+                          <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
+                            偏差
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { label: "Reach", ideal: targetGeo.reach, bike: fitScore.bikeReach, unit: "mm" },
+                          { label: "Stack", ideal: targetGeo.stack, bike: fitScore.bikeStack, unit: "mm" },
+                          { label: "STR", ideal: targetGeo.str, bike: parseFloat((fitScore.bikeStack / fitScore.bikeReach).toFixed(2)), unit: "" },
+                        ].map((row) => {
+                          const delta = typeof row.ideal === "number" && typeof row.bike === "number"
+                            ? Math.round((row.bike - row.ideal) * 10) / 10
+                            : 0;
+                          const absDelta = Math.abs(delta);
+                          const isGood = row.label === "STR" ? absDelta <= 0.05 : absDelta <= 5;
+                          const Icon = delta > 0.01 ? TrendingUp : delta < -0.01 ? TrendingDown : Minus;
+                          return (
+                            <tr key={row.label} className="border-b border-neutral-800/50 last:border-0">
+                              <td className="py-2 px-3 text-[11px] font-semibold text-neutral-400">
+                                {row.label}
+                              </td>
+                              <td className="py-2 px-3 font-mono text-[11px] font-semibold tabular-nums text-neutral-300">
+                                {row.ideal}{row.unit}
+                              </td>
+                              <td className="py-2 px-3 font-mono text-[11px] font-semibold tabular-nums text-neutral-200">
+                                {row.bike}{row.unit}
+                              </td>
+                              <td className="py-2 px-3">
+                                <span className={`inline-flex items-center gap-0.5 font-mono text-[11px] tabular-nums ${
+                                  isGood ? "text-lime-400" : "text-amber-400"
+                                }`}>
+                                  <Icon className="size-2.5" />
+                                  {delta > 0 ? "+" : ""}{delta}{row.unit}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="mt-3 flex items-center gap-1.5 text-[10px] text-neutral-500">
+                    <div className="h-1.5 flex-1 rounded-full bg-neutral-800 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-lime-400 transition-all"
+                        style={{ width: `${fitScore.score}%` }}
+                      />
+                    </div>
+                    <span className="font-mono tabular-nums text-neutral-400">{fitScore.score}%</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="border-neutral-800 bg-neutral-900/60 sticky top-20">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">

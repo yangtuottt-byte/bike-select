@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Scale, Banknote, Cpu, Gauge, ImageIcon, Warehouse, Check } from "lucide-react";
+import { Scale, Banknote, Cpu, Gauge, Warehouse, Check, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { useGarage, type GarageBike } from "@/lib/garage-store";
 import { useToast } from "@/components/ui/toast";
+import BikeImage from "@/components/bike/bike-image";
 import {
   parseTags,
   parseReachStack,
@@ -17,6 +18,7 @@ import {
   getMatchingSizes,
   type SizingResult,
 } from "@/lib/bike-utils";
+import type { FitScoreResult } from "@/lib/fit-engine";
 
 interface BikeCardProps {
   bike: {
@@ -36,6 +38,7 @@ interface BikeCardProps {
   isCompared: boolean;
   onToggleCompare: (id: string) => void;
   sizingResult: SizingResult | null;
+  fitScore?: FitScoreResult | null;
   disabledCompare: boolean;
 }
 
@@ -44,6 +47,7 @@ export default function BikeCard({
   isCompared,
   onToggleCompare,
   sizingResult,
+  fitScore,
   disabledCompare,
 }: BikeCardProps) {
   const tags = parseTags(bike.scenarioTags);
@@ -86,24 +90,42 @@ export default function BikeCard({
   return (
     <Card
       className={`group relative flex flex-col transition-all duration-300 hover:border-neutral-700 overflow-hidden ${
-        sizingMatch
-          ? "border-lime-500/30 shadow-[0_0_20px_rgba(163,230,53,0.06)] ring-1 ring-lime-500/15"
-          : ""
+        fitScore && fitScore.score >= 85
+          ? "border-lime-400/40 shadow-[0_0_24px_rgba(163,230,53,0.1)] ring-1 ring-lime-400/20"
+          : fitScore && fitScore.score >= 70
+            ? "border-lime-500/20 shadow-[0_0_16px_rgba(163,230,53,0.04)] ring-1 ring-lime-500/10"
+            : sizingMatch
+              ? "border-lime-500/30 shadow-[0_0_20px_rgba(163,230,53,0.06)] ring-1 ring-lime-500/15"
+              : ""
       } ${isCompared ? "border-lime-400/60 shadow-[0_0_16px_rgba(163,230,53,0.12)]" : ""}`}
     >
-      {/* Top-left badge */}
-      {sizingMatch && (
+      {/* Top-left badge: fit score takes priority */}
+      {fitScore ? (
+        <div className="absolute top-3 left-3 z-10">
+          <Badge
+            className={`text-[10px] gap-1 font-bold border shadow-[0_0_10px_rgba(163,230,53,0.2)] ${
+              fitScore.score >= 85
+                ? "bg-lime-400/15 text-lime-300 border-lime-400/40"
+                : fitScore.score >= 70
+                  ? "bg-lime-400/10 text-lime-400/80 border-lime-400/25"
+                  : "bg-neutral-800/80 text-neutral-400 border-neutral-700"
+            }`}
+          >
+            <Sparkles className="size-2.5" />
+            {fitScore.score}% 匹配 · 推荐尺码 {fitScore.bestSize}
+          </Badge>
+        </div>
+      ) : sizingMatch ? (
         <div className="absolute top-3 left-3 z-10">
           <Badge variant="lime" className="text-[10px] gap-1">
             <Gauge className="size-2.5" />
             尺码匹配 {matchingSizes.join("/")}
           </Badge>
         </div>
-      )}
+      ) : null}
 
       {/* Top-right actions */}
       <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
-        {/* Garage button */}
         <button
           onClick={handleGarageClick}
           title={inGarage ? "移出车库" : "加入车库"}
@@ -115,8 +137,6 @@ export default function BikeCard({
         >
           {inGarage ? <Check className="size-3" /> : <Warehouse className="size-3" />}
         </button>
-
-        {/* Compare checkbox */}
         <Checkbox
           checked={isCompared}
           onCheckedChange={() => onToggleCompare(bike.id)}
@@ -125,23 +145,15 @@ export default function BikeCard({
       </div>
 
       {/* Image — clickable link to detail */}
-      <Link href={`/bike/${bike.id}`} className="relative h-44 bg-neutral-900 flex items-center justify-center overflow-hidden cursor-pointer">
-        {bike.image ? (
-          <>
-            <img
-              src={bike.image}
-              alt={`${bike.brand.name} ${bike.model}`}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-transparent to-transparent" />
-          </>
-        ) : (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-br from-neutral-800/80 via-neutral-850 to-neutral-900" />
-            <ImageIcon className="size-12 text-neutral-600" />
-          </>
-        )}
+      <Link href={`/bike/${bike.id}`} className="relative block cursor-pointer overflow-hidden">
+        <BikeImage
+          src={bike.image}
+          alt={`${bike.brand.name} ${bike.model}`}
+          brandName={bike.brand.name}
+          sizes="card"
+          className="group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-transparent to-transparent pointer-events-none" />
         <span className="absolute bottom-2 right-3 text-[10px] font-mono font-bold text-neutral-100/40 uppercase tracking-[0.15em] z-10">
           {bike.brand.name}
         </span>
@@ -187,11 +199,7 @@ export default function BikeCard({
         <div className="grid grid-cols-2 gap-x-3 gap-y-2">
           <SpecItem icon={Cpu} label="套件" value={bike.groupset ?? "-"} />
           <SpecItem icon={Scale} label="重量" value={bike.weight ? `${bike.weight} kg` : "-"} />
-          <SpecItem
-            icon={Banknote}
-            label="材质"
-            value={getMaterialLabel(bike.frameMaterial)}
-          />
+          <SpecItem icon={Banknote} label="材质" value={getMaterialLabel(bike.frameMaterial)} />
           <SpecItem icon={Gauge} label="刹车" value={getBrakeLabel(bike.brakeSystem)} />
         </div>
 

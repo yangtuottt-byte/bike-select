@@ -13,37 +13,37 @@ const prisma = new PrismaClient({ adapter });
 const IMG = {
   // — 公路竞速 / 大组冲刺 (Tarmac, TCR, Madone SLR) —
   race_peloton:
-    "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=1200",
   race_solo:
-    "https://images.unsplash.com/photo-1507035894369-40a59592f0ff?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1507035894369-40a59592f0ff?w=1200",
   race_sprint:
-    "https://images.unsplash.com/photo-1519682337058-aecd6b8d7e09?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1519682337058-aecd6b8d7e09?w=1200",
   race_descent:
-    "https://images.unsplash.com/photo-1486723311953-58e02b6c0e7e?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1486723311953-58e02b6c0e7e?w=1200",
 
   // — 空气动力学 / 平路破风 (Propel, Madone) —
   aero_profile:
-    "https://images.unsplash.com/photo-1481250873790-2d5b0ee4f309?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1481250873790-2d5b0ee4f309?w=1200",
 
   // — 超轻爬坡 / 碳纤维细节 (Aethos, TCR SL) —
   climb_carbon:
-    "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=1200",
   climb_wheel:
-    "https://images.unsplash.com/photo-1559715541-5baa2d19f6e3?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1559715541-5baa2d19f6e3?w=1200",
 
   // — 长途耐力 / 古典赛 (Roubaix, Domane, Defy) —
   endure_open:
-    "https://images.unsplash.com/photo-1471506480004-8f7e3e3b1b1a?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1471506480004-8f7e3e3b1b1a?w=1200",
   endure_city:
-    "https://images.unsplash.com/photo-1485965125584-6b7c244b0e1d?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1485965125584-6b7c244b0e1d?w=1200",
 
   // — 砾石 / 全地形探险 (Diverge, Revolt, Checkpoint) —
   gravel_dirt:
-    "https://images.unsplash.com/photo-1571068316941-1e8a477d1e3c?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1571068316941-1e8a477d1e3c?w=1200",
   gravel_trail:
-    "https://images.unsplash.com/photo-1559344849-2c2f3c5f29b5?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1559344849-2c2f3c5f29b5?w=1200",
   gravel_mtb:
-    "https://images.unsplash.com/photo-1576435728678-6a0f9d3f2e2d?auto=format&fit=crop&w=1200&q=85",
+    "https://images.unsplash.com/photo-1576435728678-6a0f9d3f2e2d?w=1200",
 };
 
 // ─── 辅助函数 ──────────────────────────────────────────────────

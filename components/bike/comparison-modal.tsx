@@ -1,9 +1,10 @@
 "use client";
 
 import { Fragment } from "react";
-import { Zap, Trophy, Weight, Banknote, Cpu, Gauge, Hash, Cog, ImageIcon } from "lucide-react";
+import { Zap, Trophy, Weight, Banknote, Cpu, Gauge, Hash, Cog } from "lucide-react";
 import { Dialog, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import BikeImage from "@/components/bike/bike-image";
 import {
   parseTags,
   parseReachStack,
@@ -200,19 +201,13 @@ export default function ComparisonModal({ bikes, open, onClose }: ComparisonModa
           {bikes.map((bike) => (
             <div key={bike.id} className="text-center">
               {/* Bike image */}
-              <div className="relative h-28 mb-3 rounded-lg overflow-hidden bg-neutral-800 border border-neutral-700">
-                {bike.image ? (
-                  <img
-                    src={bike.image}
-                    alt={`${bike.brand.name} ${bike.model}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <ImageIcon className="size-8 text-neutral-600" />
-                  </div>
-                )}
+              <div className="relative mb-3 rounded-lg overflow-hidden border border-neutral-700">
+                <BikeImage
+                  src={bike.image}
+                  alt={`${bike.brand.name} ${bike.model}`}
+                  brandName={bike.brand.name}
+                  sizes="thumb"
+                />
               </div>
               <div className="text-xs font-medium text-neutral-500 mb-1">{bike.brand.name}</div>
               <div className="text-sm font-bold text-neutral-100 leading-tight">{bike.model}</div>

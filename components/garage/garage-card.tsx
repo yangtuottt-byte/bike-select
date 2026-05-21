@@ -1,7 +1,8 @@
 "use client";
 
-import { X, ImageIcon } from "lucide-react";
+import { X } from "lucide-react";
 import type { GarageBike } from "@/lib/garage-store";
+import BikeImage from "@/components/bike/bike-image";
 
 interface GarageCardProps {
   bike: GarageBike;
@@ -15,19 +16,13 @@ export default function GarageCard({ bike, onRemove }: GarageCardProps) {
         hover:border-neutral-700 transition-all"
     >
       {/* Thumbnail */}
-      <div className="relative size-14 shrink-0 rounded-lg overflow-hidden bg-neutral-800 border border-neutral-700">
-        {bike.image ? (
-          <img
-            src={bike.image}
-            alt={bike.model}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <ImageIcon className="size-5 text-neutral-600" />
-          </div>
-        )}
+      <div className="relative size-14 shrink-0 rounded-lg overflow-hidden border border-neutral-700">
+        <BikeImage
+          src={bike.image}
+          alt={bike.model}
+          brandName={bike.brand.name}
+          sizes="garage"
+        />
       </div>
 
       {/* Info */}
