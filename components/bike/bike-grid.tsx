@@ -15,6 +15,7 @@ interface BikeData {
   reachStack: string;
   scenarioTags: string;
   description: string | null;
+  image: string | null;
   brand: { name: string; country: string | null };
 }
 

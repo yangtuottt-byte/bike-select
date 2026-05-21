@@ -1,6 +1,6 @@
 "use client";
 
-import { Bike, Scale, Banknote, Cpu, Gauge } from "lucide-react";
+import { Bike, Scale, Banknote, Cpu, Gauge, ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,6 +27,7 @@ interface BikeCardProps {
     reachStack: string;
     scenarioTags: string;
     description: string | null;
+    image: string | null;
     brand: { name: string; country: string | null };
   };
   isCompared: boolean;
@@ -85,12 +86,26 @@ export default function BikeCard({
         />
       </div>
 
-      {/* Image placeholder */}
-      <div className="relative h-36 bg-gradient-to-br from-neutral-800/80 via-neutral-850 to-neutral-900 flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-grid-lime opacity-[0.02]" />
-        <Bike className="size-14 text-neutral-600 group-hover:text-neutral-500 transition-colors" />
+      {/* Image */}
+      <div className="relative h-44 bg-neutral-900 flex items-center justify-center overflow-hidden">
+        {bike.image ? (
+          <>
+            <img
+              src={bike.image}
+              alt={`${bike.brand.name} ${bike.model}`}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/80 via-transparent to-transparent" />
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-neutral-800/80 via-neutral-850 to-neutral-900" />
+            <ImageIcon className="size-12 text-neutral-600" />
+          </>
+        )}
         {/* Brand watermark */}
-        <span className="absolute bottom-2 right-3 text-[10px] font-mono font-bold text-neutral-700 uppercase tracking-[0.15em]">
+        <span className="absolute bottom-2 right-3 text-[10px] font-mono font-bold text-neutral-100/40 uppercase tracking-[0.15em] z-10">
           {bike.brand.name}
         </span>
       </div>

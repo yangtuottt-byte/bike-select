@@ -173,6 +173,39 @@ export function calculateValueScore(
   return Math.round(Math.max(5, 100 - pricePerPoint / 1200));
 }
 
+// --- Specs parsing ---
+
+export interface BikeSpecs {
+  frame?: string;
+  wheelset?: string;
+  shifters?: string;
+  derailleurFront?: string;
+  derailleurRear?: string;
+  crankset?: string;
+  cassette?: string;
+  tires?: string;
+}
+
+export function parseSpecs(raw: string | null): BikeSpecs | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as BikeSpecs;
+  } catch {
+    return null;
+  }
+}
+
+export const SPECS_LABELS: Record<keyof BikeSpecs, string> = {
+  frame: "车架",
+  wheelset: "轮组",
+  shifters: "手变",
+  derailleurFront: "前拨",
+  derailleurRear: "后拨",
+  crankset: "牙盘",
+  cassette: "飞轮",
+  tires: "外胎",
+};
+
 // --- Tag display helpers ---
 
 export function getTagColorClass(tag: string): string {

@@ -43,6 +43,7 @@ model Bike {
   scenarioTags  String   // JSON: ["climbing", "endurance", "racing"]
   description   String?
   image         String?
+  specs         String?  // JSON: { frame, wheelset, shifters, derailleurFront, derailleurRear, crankset, cassette, tires }
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

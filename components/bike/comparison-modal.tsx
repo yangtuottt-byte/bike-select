@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { Zap, Trophy, Weight, Banknote, Cpu, Gauge, Hash } from "lucide-react";
+import { Zap, Trophy, Weight, Banknote, Cpu, Gauge, Hash, Cog, ImageIcon } from "lucide-react";
 import { Dialog, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -13,6 +13,9 @@ import {
   getGroupsetTier,
   getGroupsetTierLabel,
   calculateValueScore,
+  parseSpecs,
+  SPECS_LABELS,
+  type BikeSpecs,
 } from "@/lib/bike-utils";
 
 interface ComparisonBike {
@@ -26,6 +29,8 @@ interface ComparisonBike {
   reachStack: string;
   scenarioTags: string;
   description: string | null;
+  image: string | null;
+  specs: string | null;
   brand: { name: string; country: string | null };
 }
 
@@ -194,6 +199,21 @@ export default function ComparisonModal({ bikes, open, onClose }: ComparisonModa
           <div />
           {bikes.map((bike) => (
             <div key={bike.id} className="text-center">
+              {/* Bike image */}
+              <div className="relative h-28 mb-3 rounded-lg overflow-hidden bg-neutral-800 border border-neutral-700">
+                {bike.image ? (
+                  <img
+                    src={bike.image}
+                    alt={`${bike.brand.name} ${bike.model}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <ImageIcon className="size-8 text-neutral-600" />
+                  </div>
+                )}
+              </div>
               <div className="text-xs font-medium text-neutral-500 mb-1">{bike.brand.name}</div>
               <div className="text-sm font-bold text-neutral-100 leading-tight">{bike.model}</div>
               <div className="mt-2 font-mono text-base font-bold text-lime-400 tabular-nums">
@@ -245,6 +265,49 @@ export default function ComparisonModal({ bikes, open, onClose }: ComparisonModa
               </Fragment>
             );
           })}
+
+          {/* ─── 硬核配置明细 (specs JSON) ─── */}
+          {bikes.some((b) => parseSpecs(b.specs)) && (
+            <>
+              <Separator className="col-span-full my-3" />
+              <div className="flex items-center gap-2 py-2">
+                <Cog className="size-3.5 text-lime-400" />
+                <span className="text-[12px] font-bold text-lime-400 uppercase tracking-[0.08em]">
+                  硬核配置明细
+                </span>
+              </div>
+              <div />
+
+              {(Object.keys(SPECS_LABELS) as (keyof BikeSpecs)[]).map((key) => {
+                const hasValue = bikes.some((b) => {
+                  const s = parseSpecs(b.specs);
+                  return s?.[key];
+                });
+                if (!hasValue) return null;
+
+                return (
+                  <Fragment key={`spec-${key}`}>
+                    <div className="flex items-center gap-1.5 py-2.5">
+                      <span className="text-[11px] font-semibold text-neutral-500">
+                        {SPECS_LABELS[key]}
+                      </span>
+                    </div>
+                    {bikes.map((bike) => {
+                      const s = parseSpecs(bike.specs);
+                      return (
+                        <div
+                          key={bike.id}
+                          className="flex items-center justify-center py-2.5 px-2 text-[11px] text-neutral-300 leading-relaxed text-center"
+                        >
+                          {s?.[key] || <span className="text-neutral-600">-</span>}
+                        </div>
+                      );
+                    })}
+                  </Fragment>
+                );
+              })}
+            </>
+          )}
         </div>
       </div>
     </Dialog>

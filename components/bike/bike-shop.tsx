@@ -32,6 +32,7 @@ interface BikeData {
   scenarioTags: string;
   description: string | null;
   image: string | null;
+  specs: string | null;
 }
 
 interface BrandData {
