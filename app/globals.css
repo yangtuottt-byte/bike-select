@@ -148,6 +148,11 @@
   to { opacity: 1; }
 }
 
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
 /* Dark scrollbar */
 html {
   scrollbar-color: oklch(0.37 0 0) oklch(0.145 0 0);

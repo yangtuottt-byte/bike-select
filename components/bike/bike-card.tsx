@@ -1,10 +1,13 @@
 "use client";
 
-import { Bike, Scale, Banknote, Cpu, Gauge, ImageIcon } from "lucide-react";
+import Link from "next/link";
+import { Scale, Banknote, Cpu, Gauge, ImageIcon, Warehouse, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { useGarage, type GarageBike } from "@/lib/garage-store";
+import { useToast } from "@/components/ui/toast";
 import {
   parseTags,
   parseReachStack,
@@ -45,6 +48,10 @@ export default function BikeCard({
 }: BikeCardProps) {
   const tags = parseTags(bike.scenarioTags);
   const geo = parseReachStack(bike.reachStack);
+  const { isInGarage, toggleBike } = useGarage();
+  const { toast } = useToast();
+  const inGarage = isInGarage(bike.id);
+
   const sizingMatch =
     sizingResult &&
     geo?.sizes.some(
@@ -56,8 +63,25 @@ export default function BikeCard({
     );
   const matchingSizes = sizingResult ? getMatchingSizes(bike.reachStack, sizingResult) : [];
 
-  // Reference reach/stack (middle size or first)
   const refSize = geo?.sizes[Math.floor((geo.sizes.length - 1) / 2)] ?? geo?.sizes[0];
+
+  const garageBike: GarageBike = {
+    id: bike.id,
+    model: bike.model,
+    brand: { name: bike.brand.name },
+    price: bike.price,
+    image: bike.image,
+  };
+
+  const handleGarageClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleBike(garageBike);
+    toast({
+      title: inGarage ? `${bike.model} 已移出车库` : `${bike.model} 已停入车库`,
+      variant: inGarage ? "default" : "success",
+    });
+  };
 
   return (
     <Card
@@ -67,7 +91,7 @@ export default function BikeCard({
           : ""
       } ${isCompared ? "border-lime-400/60 shadow-[0_0_16px_rgba(163,230,53,0.12)]" : ""}`}
     >
-      {/* Sizing match badge */}
+      {/* Top-left badge */}
       {sizingMatch && (
         <div className="absolute top-3 left-3 z-10">
           <Badge variant="lime" className="text-[10px] gap-1">
@@ -77,8 +101,22 @@ export default function BikeCard({
         </div>
       )}
 
-      {/* Compare checkbox */}
-      <div className="absolute top-3 right-3 z-10">
+      {/* Top-right actions */}
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
+        {/* Garage button */}
+        <button
+          onClick={handleGarageClick}
+          title={inGarage ? "移出车库" : "加入车库"}
+          className={`flex size-6 items-center justify-center rounded-md border transition-all ${
+            inGarage
+              ? "border-lime-400/40 bg-lime-400/10 text-lime-400"
+              : "border-neutral-600 bg-neutral-900/80 text-neutral-500 hover:border-lime-400/40 hover:text-lime-400"
+          }`}
+        >
+          {inGarage ? <Check className="size-3" /> : <Warehouse className="size-3" />}
+        </button>
+
+        {/* Compare checkbox */}
         <Checkbox
           checked={isCompared}
           onCheckedChange={() => onToggleCompare(bike.id)}
@@ -86,8 +124,8 @@ export default function BikeCard({
         />
       </div>
 
-      {/* Image */}
-      <div className="relative h-44 bg-neutral-900 flex items-center justify-center overflow-hidden">
+      {/* Image — clickable link to detail */}
+      <Link href={`/bike/${bike.id}`} className="relative h-44 bg-neutral-900 flex items-center justify-center overflow-hidden cursor-pointer">
         {bike.image ? (
           <>
             <img
@@ -104,11 +142,10 @@ export default function BikeCard({
             <ImageIcon className="size-12 text-neutral-600" />
           </>
         )}
-        {/* Brand watermark */}
         <span className="absolute bottom-2 right-3 text-[10px] font-mono font-bold text-neutral-100/40 uppercase tracking-[0.15em] z-10">
           {bike.brand.name}
         </span>
-      </div>
+      </Link>
 
       {/* Content */}
       <CardHeader className="pb-2">
@@ -120,10 +157,11 @@ export default function BikeCard({
             <span className="text-[10px] text-neutral-600">· {bike.brand.country}</span>
           )}
         </div>
-        <CardTitle className="text-base font-bold tracking-tight group-hover:text-lime-400 transition-colors">
-          {bike.model}
-        </CardTitle>
-        {/* Tags */}
+        <Link href={`/bike/${bike.id}`}>
+          <CardTitle className="text-base font-bold tracking-tight group-hover:text-lime-400 transition-colors cursor-pointer hover:text-lime-400">
+            {bike.model}
+          </CardTitle>
+        </Link>
         <div className="flex flex-wrap gap-1 mt-1">
           {tags.slice(0, 3).map((t) => (
             <span
@@ -137,7 +175,6 @@ export default function BikeCard({
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col gap-3">
-        {/* Price */}
         <div className="flex items-baseline gap-1">
           <span className="text-xl font-bold font-mono tabular-nums text-lime-400">
             ¥{bike.price.toLocaleString()}
@@ -147,7 +184,6 @@ export default function BikeCard({
 
         <Separator />
 
-        {/* Specs grid */}
         <div className="grid grid-cols-2 gap-x-3 gap-y-2">
           <SpecItem icon={Cpu} label="套件" value={bike.groupset ?? "-"} />
           <SpecItem icon={Scale} label="重量" value={bike.weight ? `${bike.weight} kg` : "-"} />
@@ -159,7 +195,6 @@ export default function BikeCard({
           <SpecItem icon={Gauge} label="刹车" value={getBrakeLabel(bike.brakeSystem)} />
         </div>
 
-        {/* Reach/Stack reference */}
         {refSize && (
           <>
             <Separator />

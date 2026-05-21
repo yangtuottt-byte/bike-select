@@ -237,7 +237,7 @@ export default function FilterSidebar({ brands, filters, onChange }: FilterSideb
       <aside
         id="filter-section"
         className={[
-          "fixed lg:sticky top-0 lg:top-24 z-40 lg:z-auto",
+          "fixed lg:sticky top-0 lg:top-24 z-40 lg:z-auto scroll-mt-20",
           "h-full lg:h-fit lg:max-h-[calc(100vh-8rem)] overflow-auto",
           "w-72 lg:w-72 shrink-0",
           "border-r lg:border border-neutral-800 lg:rounded-xl",

@@ -11,6 +11,7 @@ import SizingCalculator from "@/components/bike/sizing-calculator";
 import ComparisonBar from "@/components/bike/comparison-bar";
 import ComparisonModal from "@/components/bike/comparison-modal";
 import { parseTags, getBikeType, isBikeInSizeRange, type SizingResult } from "@/lib/bike-utils";
+import { useToast } from "@/components/ui/toast";
 
 // --- Types matching the Prisma query result ---
 
@@ -52,6 +53,7 @@ export default function BikeShop({ bikes, brands }: BikeShopProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sizingResult, setSizingResult] = useState<SizingResult | null>(null);
   const [comparisonOpen, setComparisonOpen] = useState(false);
+  const { toast } = useToast();
 
   // --- Derived: filtered bikes ---
   const filteredBikes = useMemo(() => {
@@ -87,8 +89,25 @@ export default function BikeShop({ bikes, brands }: BikeShopProps) {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
+        const removedBike = bikes.find((b) => b.id === id);
+        toast({
+          title: removedBike ? `${removedBike.brand.name} ${removedBike.model} 已移出对比` : "已移出对比",
+          variant: "default",
+        });
       } else if (next.size < 4) {
         next.add(id);
+        const addedBike = bikes.find((b) => b.id === id);
+        toast({
+          title: addedBike ? `${addedBike.model} 加入对比` : "加入对比",
+          description: `对比栏: ${next.size} / 4 款车型`,
+          variant: "success",
+        });
+      } else {
+        toast({
+          title: "对比栏已满",
+          description: "最多同时对比 4 款车型，请先移出再添加",
+          variant: "destructive",
+        });
       }
       return next;
     });
