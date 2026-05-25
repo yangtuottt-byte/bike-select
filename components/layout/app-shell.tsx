@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SessionProvider } from "next-auth/react";
 import { ToastProvider } from "@/components/ui/toast";
 import { GarageProvider } from "@/lib/garage-store";
 import { RiderProvider } from "@/lib/rider-store";
@@ -11,14 +12,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [garageOpen, setGarageOpen] = useState(false);
 
   return (
-    <ToastProvider>
-      <GarageProvider>
-        <RiderProvider>
-          <Navbar onGarageClick={() => setGarageOpen(true)} />
-          {children}
-          <GarageSheet open={garageOpen} onClose={() => setGarageOpen(false)} />
-        </RiderProvider>
-      </GarageProvider>
-    </ToastProvider>
+    <SessionProvider>
+      <ToastProvider>
+        <GarageProvider>
+          <RiderProvider>
+            <Navbar onGarageClick={() => setGarageOpen(true)} />
+            {children}
+            <GarageSheet open={garageOpen} onClose={() => setGarageOpen(false)} />
+          </RiderProvider>
+        </GarageProvider>
+      </ToastProvider>
+    </SessionProvider>
   );
 }

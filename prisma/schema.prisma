@@ -7,13 +7,21 @@ datasource db {
   provider = "sqlite"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  password      String
+  role          Role     @default(USER)
+  avatar        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  favoriteBikes Bike[]
 }
 
 model Brand {
@@ -46,6 +54,7 @@ model Bike {
   specs         String?  // JSON: { frame, wheelset, shifters, derailleurFront, derailleurRear, crankset, cassette, tires }
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  favoritedBy   User[]
 
   @@index([brandId])
   @@index([frameMaterial])
