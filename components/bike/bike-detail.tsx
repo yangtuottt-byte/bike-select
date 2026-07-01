@@ -17,6 +17,8 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
+  ScanEye,
+  ExternalLink,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import { useGarage, type GarageBike } from "@/lib/garage-store";
 import { useToast } from "@/components/ui/toast";
 import BikeImage from "@/components/bike/bike-image";
+import PriceTracker from "@/components/bike/PriceTracker";
 import {
   parseTags,
   parseReachStack,
@@ -252,6 +255,9 @@ export default function BikeDetail({ bike }: BikeDetailProps) {
                 </CardContent>
               </Card>
             )}
+
+            {/* ── Market Trends ── */}
+            <PriceTracker currentPrice={bike.price} />
           </div>
 
           {/* ── RIGHT: Geometry table ── */}
@@ -413,7 +419,28 @@ export default function BikeDetail({ bike }: BikeDetailProps) {
       </div>
 
       {/* ─── Floating CTA ──────────────────────────────────── */}
-      <div className="fixed bottom-6 inset-x-0 z-30 flex justify-center pointer-events-none">
+      <div className="fixed bottom-6 inset-x-0 z-30 flex justify-center gap-3 pointer-events-none">
+        {/* Second-hand radar */}
+        <a
+          href={`https://s.taobao.com/search?q=${encodeURIComponent(`${bike.brand.name} ${bike.model} 公路车`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="pointer-events-auto flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold
+            shadow-2xl shadow-black/60 border backdrop-blur-xl transition-all duration-300
+            active:scale-95 hover:scale-[1.02]
+            bg-amber-500/90 border-amber-400/40 text-neutral-950
+            hover:bg-amber-400 hover:shadow-[0_0_40px_rgba(251,191,36,0.3)]
+            group"
+        >
+          <span className="relative flex size-5 items-center justify-center">
+            <ScanEye className="size-4 relative z-10 group-hover:animate-pulse" />
+            <span className="absolute inset-0 rounded-full bg-amber-400/30 animate-ping [animation-duration:2s]" />
+          </span>
+          二手雷达 · 去闲鱼捡漏
+          <ExternalLink className="size-3.5 opacity-60" />
+        </a>
+
+        {/* Garage toggle */}
         <button
           onClick={handleGarageToggle}
           className={`pointer-events-auto flex items-center gap-2.5 rounded-2xl px-6 py-3.5 text-sm font-bold

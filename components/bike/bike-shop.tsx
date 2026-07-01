@@ -108,32 +108,40 @@ export default function BikeShop({ bikes, brands }: BikeShopProps) {
 
   // --- Handlers ---
   const toggleCompare = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
+    // Compute action *before* the setState updater so toast is never called during render.
+    const isRemoving = selectedIds.has(id);
+    const isFull = !isRemoving && selectedIds.size >= 4;
+
+    if (isRemoving) {
+      const removedBike = bikes.find((b) => b.id === id);
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
         next.delete(id);
-        const removedBike = bikes.find((b) => b.id === id);
-        toast({
-          title: removedBike ? `${removedBike.brand.name} ${removedBike.model} 已移出对比` : "已移出对比",
-          variant: "default",
-        });
-      } else if (next.size < 4) {
+        return next;
+      });
+      toast({
+        title: removedBike ? `${removedBike.brand.name} ${removedBike.model} 已移出对比` : "已移出对比",
+        variant: "default",
+      });
+    } else if (isFull) {
+      toast({
+        title: "对比栏已满",
+        description: "最多同时对比 4 款车型，请先移出再添加",
+        variant: "destructive",
+      });
+    } else {
+      const addedBike = bikes.find((b) => b.id === id);
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
         next.add(id);
-        const addedBike = bikes.find((b) => b.id === id);
-        toast({
-          title: addedBike ? `${addedBike.model} 加入对比` : "加入对比",
-          description: `对比栏: ${next.size} / 4 款车型`,
-          variant: "success",
-        });
-      } else {
-        toast({
-          title: "对比栏已满",
-          description: "最多同时对比 4 款车型，请先移出再添加",
-          variant: "destructive",
-        });
-      }
-      return next;
-    });
+        return next;
+      });
+      toast({
+        title: addedBike ? `${addedBike.model} 加入对比` : "加入对比",
+        description: `对比栏: ${selectedIds.size + 1} / 4 款车型`,
+        variant: "success",
+      });
+    }
   };
 
   const clearComparison = () => {
